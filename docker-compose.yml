@@ -1,0 +1,25 @@
+version: '3.3'
+services:
+  authentication:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 7000:7000
+    volumes:
+      - .:/app
+    depends_on:
+      - authenticationdb
+      
+  authenticationdb:
+    image: mysql:5.7.22
+    restart: always
+    environment:
+      MYSQL_DATABASE: authentication
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - .dbdata:/var/lib/mysql
+    ports:
+      - 44066:3306
