@@ -20,20 +20,20 @@ class UserViewSet(viewsets.ViewSet) :
         serializer.save()
         username = request.data.get("username")
         password = request.data.get("password")
-        tocken = sha256(f'{username} {password}'.encode()).hexdigest()
+        token = sha256(f'{username} {password}'.encode()).hexdigest()
         message_response = {
             'user' : serializer.data,
-            'tocken' : tocken
+            'token' : token
         }
         return Response(message_response, status=status.HTTP_201_CREATED)
 
     def authenticate_user(self, request) :
         username = request.headers.get("username")
-        tocken = request.headers.get("tocken")
+        token = request.headers.get("token")
         print(username)
-        print(tocken)
+        print(token)
         user = Users.objects.raw(f'SELECT * FROM auth_app_users WHERE `username` = "{username}"')
-        if sha256(f'{user[0].username} {user[0].password}'.encode()).hexdigest() == tocken :
+        if sha256(f'{user[0].username} {user[0].password}'.encode()).hexdigest() == token :
             return Response({"message" : "tocken is valid.", "isvalid" : 1})
         else :
             return Response({"message" : "tocken is invalid.", "isvalid" : 0})
@@ -46,9 +46,9 @@ class UserViewSet(viewsets.ViewSet) :
 
     def user_panel(self, request) :
         username = request.headers.get("username")
-        tocken = request.headers.get("tocken")
+        token = request.headers.get("token")
         user = Users.objects.raw(f'SELECT * FROM auth_app_users WHERE `username` = "{username}"')
-        if sha256(f'{user[0].username} {user[0].password}'.encode()).hexdigest() == tocken :
+        if sha256(f'{user[0].username} {user[0].password}'.encode()).hexdigest() == token :
             panel_data = UserPanel.objects.raw(f"SELECT * FROM `auth_app_userpanel` WHERE `username` = '{username}'")
             serializer = PanelSerializer(panel_data, many=True)
             return Response(serializer.data)
