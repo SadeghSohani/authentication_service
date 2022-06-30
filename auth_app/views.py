@@ -54,3 +54,14 @@ class UserViewSet(viewsets.ViewSet) :
             return Response(serializer.data)
         else :
             return Response({"message" : "tocken is invalid.", "isvalid" : 0})
+
+    def delete_fight(self, request):
+        username = request.headers.get("username")
+        token = request.headers.get("token")
+        user = Users.objects.raw(f'SELECT * FROM auth_app_users WHERE `username` = "{username}"')
+        if sha256(f'{user[0].username} {user[0].password}'.encode()).hexdigest() == token :
+            panel_data = UserPanel.objects.get(id = request.data.get("id"))
+            panel_data.delete()
+            return Response({"message" : "flight has been deleted successfully."})
+        else :
+            return Response({"message" : "tocken is invalid.", "isvalid" : 0})

@@ -16,6 +16,9 @@ urlpatterns = [
     })), 
     path('user/panel', UserViewSet.as_view({
         'get' : 'user_panel'
+    })),  
+    path('user/delete', UserViewSet.as_view({
+        'post' : 'delete_fight'
     })),   
 ]
 
